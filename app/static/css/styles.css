@@ -1,0 +1,31 @@
+/* Add a slight animation to the suggestions list items */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+#suggestionsList li {
+    animation: fadeIn 0.5s ease-in-out;
+    padding: 0.5em 0;
+}
+
+/* Styling for forms and buttons */
+form {
+    margin-bottom: 2em;
+}
+
+button[type="submit"] {
+    margin-top: 1em;
+}
+
+/* Styling for feedback list */
+#feedbackList p {
+    padding: 0.5em;
+    border-bottom: 1px solid #d2d2d2;
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+/* Add some padding to the main sections */
+.container {
+    padding: 2em;
+}

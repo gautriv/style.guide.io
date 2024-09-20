@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SME and Style Guide Review Platform</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header class="my-4">
+            <h1 class="text-center">SME and Style Guide Review Platform</h1>
+        </header>
+        <main>
+            <div class="row">
+                <div class="col-md-6">
+                    <h2>Document Review</h2>
+                    <form id="uploadForm" enctype="multipart/form-data">
+                        <div class="form-group">
+                            <input type="file" name="file" id="fileInput" class="form-control-file" />
+                        </div>
+                        <button class="btn btn-primary" type="submit">Upload</button>
+                    </form>
+                    <div id="content" class="mt-4"></div>
+                </div>
+                <div class="col-md-6">
+                    <h2>Suggestions</h2>
+                    <ul id="suggestionsList" class="list-group"></ul>
+                </div>
+            </div>
+            <div class="row mt-4">
+                <div class="col-12">
+                    <h2>SME Feedback</h2>
+                    <form id="feedbackForm">
+                        <div class="form-group">
+                            <textarea class="form-control" rows="5" id="feedback"></textarea>
+                        </div>
+                        <button class="btn btn-primary" type="submit">Submit Feedback</button>
+                    </form>
+                    <div id="feedbackList" class="mt-4"></div>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        document.getElementById('uploadForm').onsubmit = async (e) => {
+            e.preventDefault();
+            const fileInput = document.getElementById('fileInput');
+            const formData = new FormData();
+            formData.append('file', fileInput.files[0]);
+
+            const response = await fetch('/upload', {
+                method: 'POST',
+                body: formData,
+            });
+            const result = await response.json();
+            document.getElementById('content').innerHTML = result.content;
+            document.getElementById('suggestionsList').innerHTML = result.suggestions.map(s => `<li class="list-group-item">${s}</li>`).join('');
+        };
+
+        document.getElementById('feedbackForm').onsubmit = async (e) => {
+            e.preventDefault();
+            const feedback = document.getElementById('feedback').value;
+            
+            const response = await fetch('/feedback', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ feedback }),
+            });
+            const result = await response.json();
+            alert(result.message);
+            fetchFeedbacks();
+        };
+
+        async function fetchFeedbacks() {
+            const response = await fetch('/feedbacks');
+            const result = await response.json();
+            document.getElementById('feedbackList').innerHTML = result.feedback_list.map(f => `<p>${f}</p>`).join('');
+        }
+
+        // Fetch feedbacks on page load
+        document.addEventListener('DOMContentLoaded', fetchFeedbacks);
+    </script>
+</body>
+</html>
